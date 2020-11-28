@@ -1,10 +1,10 @@
 class ray :
     def __init__(self, origin, direction) :
-        self.origin = origin
-        self.direction = direction
+        self.A = origin
+        self.B = direction
     def origin(self):
-        return self.origin
+        return self.A
     def direction(self):
-        return self.direction
+        return self.B
     def point_at(self, t):
-        return self.origin + self.direction * t
+        return self.A + self.B * t
