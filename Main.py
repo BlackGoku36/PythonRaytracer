@@ -11,6 +11,8 @@ from Sphere import sphere
 from Hittable import hit_record
 from Material import material, lambertian, metal
 
+from tqdm import tqdm
+
 def shoot_ray(r, object_list, depth=0):
 	rec = hit_record()
 	for obj in object_list:
@@ -20,7 +22,7 @@ def shoot_ray(r, object_list, depth=0):
 	if rec.hitted == True:
 		material = rec.material
 		m_rec = material.scatter(r, rec)
-		if depth < 50 and m_rec.bScattered == True:
+		if depth < 10 and m_rec.bScattered == True:
 			return m_rec.attenuation * shoot_ray( m_rec.scattered_ray, object_list, depth + 1)
 		else:
 			return vec3(0.0, 0.0, 0.0)
@@ -54,7 +56,7 @@ def renderer():
 	file = open('output.ppm', 'w')
 
 	file.write("P3\n{0:d} {1:d}\n255\n".format(image_width, image_height))
-
+	pbar = tqdm(desc="Pixels rendered: ",total=image_height*image_width)
 	for y in range(image_height-1, -1, -1):
 		for x in range(image_width):
 			color = vec3(0.0, 0.0, 0.0)
@@ -65,8 +67,9 @@ def renderer():
 				color = color + shoot_ray(r, object_list)
 			color = color / float(num_samples)
 			util.color.write_color(file, color)
-
+			pbar.update(1)
 	file.close()
+	pbar.close()
 
 start = time.time()
 renderer()
